@@ -9,8 +9,7 @@ const Layout = (props) => {
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
 
-      <SideBar></SideBar>
-
+      <SideBar />
       {props.children}
     </Box>
   );

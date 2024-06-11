@@ -28,7 +28,7 @@ const useChatSession = (sessionId) => {
   }, [sessionId, dispatch]);
 
   return {
-    currentSession: state.currentSession,
+    session: state.session,
     messages: state.messages,
   };
 };

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -6,26 +7,31 @@ import Button from "../Button/Button";
 import Logo from "../Logo/Logo";
 import AddIcon from "@mui/icons-material/Add";
 import LogoutIcon from "@mui/icons-material/Logout";
+import KeyboardOptionKeyIcon from "@mui/icons-material/KeyboardOptionKey";
 import { drawerWidth } from "../../theme/theme";
 import DropDown from "../Dropdown/Dropdown";
 import { useChatList } from "../../hooks/useChatList";
 import ChatSessionButton from "./ChatSessionButton";
 import useChatSession from "../../hooks/useChatSession";
+import { useParams } from "react-router-dom";
 
 const SideBar = () => {
-  const [focused, setFocused] = useState(null);
+  const navigate = useNavigate();
+  const admin = true;
+  const { sessionId } = useParams();
   const { chatSessions } = useChatList();
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const handleClickChatSession = (sessionId) => {
-    // sessionId를 사용하여 현재 세션을 찾습니다.
-    const session = chatSessions.find((session) => session.id === sessionId);
-    if (session) {
-      setFocused(session.id);
-    }
-  };
+  const handleClickChatSession = (id) => {
+    navigate(`/${id}`);
 
-  useChatSession(focused);
+    // const session = chatSessions.find((session) => session.id === id);
+    // if (session) {
+    //   setFocused(id);
+    // }
+  };
+  console.log("sessionId", sessionId);
+  useChatSession(sessionId);
 
   const handleMenuClose = () => {
     setAnchorEl(null);
@@ -33,6 +39,10 @@ const SideBar = () => {
 
   const onClickAddQuestion = (event) => {
     setAnchorEl(event.currentTarget);
+  };
+
+  const onClickOption = () => {
+    navigate("/admin");
   };
 
   const DropdownItems = [
@@ -81,7 +91,7 @@ const SideBar = () => {
               key={session.id}
               title={session.title}
               mode={session.mode}
-              isFocused={focused === session.id}
+              isFocused={Number(sessionId) === session.id}
               onClick={() => handleClickChatSession(session.id)}
             />
           ))}
@@ -108,6 +118,15 @@ const SideBar = () => {
             onClose={handleMenuClose}
             items={DropdownItems}
           />
+          {admin && (
+            <Button
+              startIcon={<KeyboardOptionKeyIcon />}
+              sx={{ width: "100%", marginBottom: "10px", bgcolor: "#959E96" }}
+              onClick={onClickOption}
+            >
+              Option
+            </Button>
+          )}
 
           <Button
             startIcon={<LogoutIcon />}
