@@ -3,6 +3,7 @@ import { Box, Container } from "@mui/material";
 import { LiveChatMessage, FAQChatMessage } from "./ChatMessage";
 import useChatSession from "../../hooks/useChatSession";
 import { useParams } from "react-router-dom";
+import { useChatList } from "../../hooks/useChatList";
 
 const mms = [
   {
@@ -60,8 +61,15 @@ const answer = [
 
 const Chat = (props) => {
   const { sessionId } = useParams();
+  const { chatSessions } = useChatList();
   const { messages } = useChatSession(sessionId);
   const endOfMessagesRef = useRef(null);
+
+  console.log("chatSessions:", (chatSessions));
+  console.log("sessionId:", typeof(sessionId));
+
+  const mode = chatSessions.find((session) => session.id == Number(sessionId))?.mode;
+  console.log("mode:", mode);
 
   useEffect(() => {
     endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -74,9 +82,11 @@ const Chat = (props) => {
         mr={4}
         sx={{ maxHeight: "calc(100vh - 200px)", overflowY: "auto" }}
       >
-        {answer.map((msg, index) => (
-          <FAQChatMessage key={index} message={msg} />
-        ))}
+        {mode === "live" ? (
+          messages.map((message, index) => <LiveChatMessage key={index} message={message} />)
+        ) : (
+          messages.map((message, index) => <FAQChatMessage key={index} message={message} />)
+        )}
         <div ref={endOfMessagesRef} />
       </Box>
     </Container>

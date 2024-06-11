@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -9,12 +10,15 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { Typography, Box } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import DropDown from "../Dropdown/Dropdown";
+import RenameModal from "../Modal/RenameModal";
 
-const ChatSessionButton = ({ title, mode, isFocused, onClick }) => {
-  const subtitle = mode === "live" ? "Live mode" : "FAQ mode";
-  const modeColor = mode === "live" ? "#FF5353" : "#5AA7EE";
+const ChatSessionButton = ({ session, isFocused }) => {
+  const subtitle = session.mode === "live" ? "Live mode" : "FAQ mode";
+  const modeColor = session.mode === "live" ? "#FF5353" : "#5AA7EE";
+  const navigate = useNavigate();
 
   const [anchorEl, setAnchorEl] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -22,6 +26,10 @@ const ChatSessionButton = ({ title, mode, isFocused, onClick }) => {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleClickChatSession = () => {
+    navigate(`/${session.id}`);
   };
 
   const renameClicked = () => {
@@ -35,12 +43,12 @@ const ChatSessionButton = ({ title, mode, isFocused, onClick }) => {
     {
       id: "rename",
       text: "Rename",
-      onClick: () => renameClicked(),
+      onClick: () => setModalOpen(true),
     },
     {
       id: "remove",
       text: "Remove",
-      onClick: () => removeClicked(),
+      onClick: () => session.removeClicked(),
     },
   ];
 
@@ -62,6 +70,7 @@ const ChatSessionButton = ({ title, mode, isFocused, onClick }) => {
             onClose={handleMenuClose}
             items={items}
           />
+          <RenameModal open={modalOpen} onClose={() => setModalOpen(false)} />
         </>
       }
       sx={{
@@ -76,7 +85,7 @@ const ChatSessionButton = ({ title, mode, isFocused, onClick }) => {
       <ListItemButton
         disableRipple
         sx={{ width: "100%", borderRadius: "10px" }}
-        onClick={onClick}
+        onClick={handleClickChatSession}
       >
         <ListItemIcon>
           <ChatBubbleIcon sx={{ color: grey[50] }} />
@@ -84,7 +93,7 @@ const ChatSessionButton = ({ title, mode, isFocused, onClick }) => {
         <ListItemText
           primary={
             <Typography variant="body1" style={{ color: "#FFFFFF" }}>
-              {title}
+              {session.title}
             </Typography>
           }
           secondary={

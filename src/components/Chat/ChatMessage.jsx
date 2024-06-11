@@ -12,7 +12,6 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 export const ChatMessage = ({ children, timestamp }) => {
-  // const { text, timestamp, sources } = message;
   const avatar = "https://via.placeholder.com/5";
 
   return (
@@ -33,62 +32,74 @@ export const ChatMessage = ({ children, timestamp }) => {
 };
 
 export const LiveChatMessage = ({ message }) => {
-  const { text, timestamp, sources } = message;
+  const { question, answer, createdAt, source } = message;
 
   return (
-    <ChatMessage timestamp={timestamp}>
-      <Typography sx={{ whiteSpace: "pre-line" }}>{text}</Typography>
-      {sources && sources.length > 0 && (
-        <Box
-          mt={2}
-          px={4}
-          py={2}
-          sx={{ bgcolor: "#E0E0E0", borderRadius: "30px" }}
-        >
-          <Typography variant="subtitle2" color="textSecondary">
-            출처
-          </Typography>
-          {sources.map((source, index) => (
-            <Link
-              key={index}
-              href={source.url}
-              target="_blank"
-              rel="noopener"
-              sx={{ display: "block" }}
-            >
-              {source.label}
-            </Link>
-          ))}
-        </Box>
-      )}
-    </ChatMessage>
+    <>
+      <ChatMessage timestamp={createdAt}>
+        <Typography sx={{ whiteSpace: "pre-line" }}>{question}</Typography>
+      </ChatMessage>
+
+      <ChatMessage timestamp={createdAt}>
+        <Typography sx={{ whiteSpace: "pre-line" }}>{answer}</Typography>
+        {source && source.length > 0 && (
+          <Box
+            mt={2}
+            px={4}
+            py={2}
+            sx={{ bgcolor: "#E0E0E0", borderRadius: "30px" }}
+          >
+            <Typography variant="subtitle2" color="textSecondary">
+              출처
+            </Typography>
+            {source.map((s, index) => (
+              <Link
+                key={index}
+                href={s}
+                target="_blank"
+                rel="noopener"
+                sx={{ display: "block" }}
+              >
+                {s}
+              </Link>
+            ))}
+          </Box>
+        )}
+      </ChatMessage>
+    </>
   );
 };
 
 export const FAQChatMessage = ({ message }) => {
-  const { text, timestamp, answers } = message;
+  const { question, answer, createdAt, source } = message;
 
   return (
-    <ChatMessage timestamp={timestamp}>
-      <Typography sx={{ whiteSpace: "pre-line" }}>{text}</Typography>
-      {answers && answers.length > 0 && (
-        <Box my={2}>
-          <Accordion elevation={1}>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <Typography variant="subtitle1">{answers[0]}</Typography>{" "}
-              {/* Display the first answer as summary */}
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography>{answers.join(" ")}</Typography>{" "}
-              {/* Display all answers in details */}
-            </AccordionDetails>
-          </Accordion>
-        </Box>
-      )}
+    <ChatMessage timestamp={createdAt}>
+      <Typography inline sx={{ whiteSpace: "pre-line" }}>
+        {question}
+      </Typography>
+      {answer.map((answer, index) => {
+        const firstLine = answer.split("\n", 1)[0];
+        const restOfAnswer = answer.substring(firstLine.length);
+        return (
+          <Box my={2} key={index}>
+            <Accordion elevation={1}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls={`panel${index}a-content`}
+                id={`panel${index}a-header`}
+              >
+                {/* 첫 줄만 요약해서 보여줍니다. */}
+                <Typography variant="subtitle1">{firstLine}</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                {/* AccordionDetails를 확장하면, AccordionSummary의 텍스트에 이어서 나머지 텍스트를 보여줍니다. */}
+                <Typography>{restOfAnswer}</Typography>
+              </AccordionDetails>
+            </Accordion>
+          </Box>
+        );
+      })}
     </ChatMessage>
   );
 };

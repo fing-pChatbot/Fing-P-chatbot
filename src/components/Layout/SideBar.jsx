@@ -12,8 +12,8 @@ import { drawerWidth } from "../../theme/theme";
 import DropDown from "../Dropdown/Dropdown";
 import { useChatList } from "../../hooks/useChatList";
 import ChatSessionButton from "./ChatSessionButton";
-import useChatSession from "../../hooks/useChatSession";
 import { useParams } from "react-router-dom";
+import LogoutModal from "../Modal/LogoutModal";
 
 const SideBar = () => {
   const navigate = useNavigate();
@@ -21,17 +21,7 @@ const SideBar = () => {
   const { sessionId } = useParams();
   const { chatSessions } = useChatList();
   const [anchorEl, setAnchorEl] = useState(null);
-
-  const handleClickChatSession = (id) => {
-    navigate(`/${id}`);
-
-    // const session = chatSessions.find((session) => session.id === id);
-    // if (session) {
-    //   setFocused(id);
-    // }
-  };
-  console.log("sessionId", sessionId);
-  useChatSession(sessionId);
+  const [LogoutModalOpen, setLogoutModalOpen] = useState(false);
 
   const handleMenuClose = () => {
     setAnchorEl(null);
@@ -39,6 +29,12 @@ const SideBar = () => {
 
   const onClickAddQuestion = (event) => {
     setAnchorEl(event.currentTarget);
+  };
+
+  const addChat = (mode) => {
+    console.log(`Add ${mode} Chat`);
+    // call backend api
+    navigate("/100");
   };
 
   const onClickOption = () => {
@@ -49,12 +45,12 @@ const SideBar = () => {
     {
       id: "live",
       text: "Live Mode",
-      onClick: () => console.log("Live Mode"),
+      onClick: () => addChat("Live"),
     },
     {
       id: "faq",
       text: "FAQ Mode",
-      onClick: () => console.log("Live Mode"),
+      onClick: () => addChat("faq"),
     },
   ];
 
@@ -88,11 +84,8 @@ const SideBar = () => {
         <List sx={{ flexGrow: 1 }}>
           {chatSessions.map((session) => (
             <ChatSessionButton
-              key={session.id}
-              title={session.title}
-              mode={session.mode}
+              session={session}
               isFocused={Number(sessionId) === session.id}
-              onClick={() => handleClickChatSession(session.id)}
             />
           ))}
         </List>
@@ -131,9 +124,14 @@ const SideBar = () => {
           <Button
             startIcon={<LogoutIcon />}
             sx={{ width: "100%", bgcolor: "#777777" }}
+            onClick={() => setLogoutModalOpen(true)}
           >
             Sign Out
           </Button>
+          <LogoutModal
+            open={LogoutModalOpen}
+            onClose={() => setLogoutModalOpen(false)}
+          />
         </Box>
       </Drawer>
     </Box>

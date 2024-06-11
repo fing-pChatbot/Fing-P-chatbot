@@ -4,15 +4,19 @@ import { useParams } from "react-router-dom";
 import { drawerWidth } from "../theme/theme";
 import Container from "@mui/material/Container";
 import Chat from "../components/Chat/Chat";
-import Layout from "../components/Layout/Layout";
 import { Typography } from "@mui/material";
+import SideBar from "../components/Layout/SideBar";
+import CssBaseline from "@mui/material/CssBaseline";
 
 const MainPage = () => {
   const { sessionId } = useParams();
-  console.log("MainPage: sessionId", sessionId);
 
   return (
-    <Layout>
+    <Box sx={{ display: "flex" }}>
+      <CssBaseline />
+
+      <SideBar />
+
       {sessionId ? (
         <Chat />
       ) : (
@@ -42,7 +46,6 @@ const MainPage = () => {
           </Box>
         </Container>
       )}
-      {/* Fixed InputBar at the bottom */}
       <Box
         sx={{
           position: "fixed",
@@ -55,7 +58,7 @@ const MainPage = () => {
       >
         <InputBar />
       </Box>
-    </Layout>
+    </Box>
   );
 };
 
